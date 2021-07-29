@@ -18,7 +18,7 @@ app.use(express.json({ extended: false }));
 app.get("/", (req, res) => res.send("Server is active"));
 
 // api routes
-app.use("/api", user);
+app.use("/api/user", user);
 
 const PORT = process.env.PORT || 8000;
 

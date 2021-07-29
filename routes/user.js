@@ -9,7 +9,7 @@ const Todo = require("../models/todo");
  * @route POST /api/create
  * @description create user
  */
-router.post("/create", (req, res) => {
+router.post("/", (req, res) => {
     User.create(req.body)
         .then((data) => res.json(data))
         .catch((err) =>
@@ -29,13 +29,13 @@ router.post("/todo/:userId", (req, res) => {
 
     // creating new todo
     const newTodo = new Todo(req.body);
-
+    console.log({ newTodo });
     // saving newTodo
     newTodo.save();
 
     User.findByIdAndUpdate(
         userId,
-        { $push: { todo: newTodo_id } },
+        { $push: { todo: newTodo._id } },
         { new: true, upsert: true },
         (err, user) => {
             if (err) {
@@ -48,10 +48,26 @@ router.post("/todo/:userId", (req, res) => {
 });
 
 /**
+ * @route GET /api/:userId
+ * @description get user details
+ */
+router.get("/:userId", (req, res) => {
+    const { userId } = req.params;
+
+    User.findById(userId)
+        .then((data) => res.json(data))
+        .catch((err) =>
+            res
+                .status(400)
+                .json({ message: "User not found", error: err.message })
+        );
+});
+
+/**
  * @route GET /api/get-all/:userId
  * @description populate the todo schema
  */
-router.get("/get-all/:userId", (req, res) => {
+router.get("/todo/:userId", (req, res) => {
     // extracting userId
     const { userId } = req.params;
 
